@@ -30,7 +30,7 @@ dev_dependencies:
     sdk: flutter
   # firebase_auth: 0.8.4+5
   firebase_core: ^0.3.0
-  firebase_database: 2.0.3
+  # firebase_database: 2.0.3
   cloud_firestore: 0.10.1
 
 # For information on the generic Dart part of this file, see the
