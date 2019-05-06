@@ -64,6 +64,8 @@
 
 # ignore the google credentials file
 **/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3

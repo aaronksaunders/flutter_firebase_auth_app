@@ -7,8 +7,6 @@ class Item {
   String owner;
   String id;
 
-
-
   Item(
     this.subject,
     this.body,
