@@ -8,7 +8,10 @@ A new Flutter application.
 
 ## Please Follow Firebase Setup Instructions
 - there is no google-services.json including in the project, you will need to create your own
-- this initial commit only supports android, ios is a work in progress
+- this initial commit supports android and ios 
+  - ran into issue with ios that required me to update all of the podfiles
+  - ran into issue with android that require me to modify build properties
+  - see this link for additional setup issues https://codelabs.developers.google.com/codelabs/flutter-firebase/index.html#6
 
 ## Getting Started
 
