@@ -1,6 +1,14 @@
-# firebase_auth_app
+# Flutter Firebase Sample App
 
 A new Flutter application.
+
+### Packages Utilized
+- https://pub.dev/packages/firebase_core
+- https://pub.dartlang.org/packages/cloud_firestore
+
+## Please Follow Firebase Setup Instructions
+- there is no google-services.json including in the project, you will need to create your own
+- this initial commit only supports android, ios is a work in progress
 
 ## Getting Started
 
