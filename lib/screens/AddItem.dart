@@ -104,7 +104,6 @@ class _AddItemPageState extends State<AddItemPage> {
   void submit(BuildContext context) async {
     if (validate()) {
       try {
-        //final auth = Provider.of(context).auth;
         var i = new Item(_subject, _body, _dueDate);
         var result = await i.saveItem();
         if (result != null) {
@@ -151,8 +150,8 @@ class _AddItemPageState extends State<AddItemPage> {
     DateTime picked = await showDatePicker(
         context: context,
         initialDate: new DateTime.now(),
-        firstDate: new DateTime(2016),
-        lastDate: new DateTime(2020));
+        firstDate: new DateTime(2019),
+        lastDate: new DateTime(2022));
 
     if (picked != null) {
       _controller.text = picked.toString();
