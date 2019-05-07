@@ -12,13 +12,16 @@ enum FormType { LOGIN, REGISTER }
 
 class _AddItemPageState extends State<AddItemPage> {
   final formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _controller = TextEditingController();
+  SnackBar snackBar;
 
   String _subject, _body, _dueDate = " ";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Add Item Form Page'),
       ),
@@ -45,7 +48,7 @@ class _AddItemPageState extends State<AddItemPage> {
     return <Widget>[
       RaisedButton(
         child: Align(alignment: Alignment.center, child: Text('Save Item')),
-        onPressed: ()=> submit(context),
+        onPressed: () => submit(context),
       ),
       // RaisedButton(
       //   child: Align(alignment: Alignment.center, child: Text('Cancel')),
@@ -109,9 +112,24 @@ class _AddItemPageState extends State<AddItemPage> {
         } else {
           print("error");
         }
+        snackBar = SnackBar(
+          content: Text('Item Added Successfully!'),
+          duration: Duration(seconds: 30),
+          action: SnackBarAction(
+            label: 'Close',
+            onPressed: () {
+              // Some code to undo the change!
+              _scaffoldKey.currentState
+                  .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
+            },
+          ),
+        );
 
-        // close window
-        Navigator.pop(context);
+        // Find the Scaffold in the Widget tree and use it to show a SnackBar!
+        _scaffoldKey.currentState.showSnackBar(snackBar).closed.then((reason) {
+          // snackbar is now closed, close window
+          Navigator.pop(context);
+        });
       } catch (e) {
         print(e);
       }

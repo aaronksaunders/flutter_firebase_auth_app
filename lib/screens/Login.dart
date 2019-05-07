@@ -10,6 +10,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String _email, _password, _firstName, _lastName;
   FormType _formType = FormType.LOGIN;
@@ -23,6 +24,33 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return false;
     }
+  }
+
+  _showErrorMessage(_error) {
+
+    // if one is open, close it
+    _scaffoldKey.currentState
+        .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
+
+    SnackBar snackBar = SnackBar(
+      content: Text(_error.message),
+      duration: Duration(seconds: 30),
+      backgroundColor: Colors.redAccent,
+      action: SnackBarAction(
+        label: 'Close',
+        textColor: Colors.white,
+        onPressed: () {
+          // Some code to undo the change!
+          _scaffoldKey.currentState
+              .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
+        },
+      ),
+    );
+
+    // Find the Scaffold in the Widget tree and use it to show a SnackBar!
+    _scaffoldKey.currentState.showSnackBar(snackBar).closed.then((reason) {
+      // snackbar is now closed, close window
+    });
   }
 
   void submit() async {
@@ -46,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       } catch (e) {
         print(e);
+        _showErrorMessage(e);
       }
     }
   }
@@ -67,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Form Page'),
       ),
