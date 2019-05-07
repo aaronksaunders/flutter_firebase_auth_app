@@ -1,5 +1,5 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/components/LoadingCircle.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class ItemsList extends StatelessWidget {
             return ListTile(
               title: Text(item.subject ?? '<No message retrieved>'),
               subtitle: Text('Due Date ${item.dueDate}'),
-              onTap: ()=>{},
+              onTap: () => {FirebaseAuth.instance.signOut()},
             );
           },
         );
