@@ -1,39 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:firebase_auth_app/model/Item.dart';
 import 'package:flutter/material.dart';
-
-enum FormType { LOGIN, REGISTER }
+import 'package:flutter_icons/flutter_icons.dart';
 
 class AddItemPage extends StatefulWidget {
   @override
   _AddItemPageState createState() => _AddItemPageState();
 }
 
+enum FormType { LOGIN, REGISTER }
+
 class _AddItemPageState extends State<AddItemPage> {
   final formKey = GlobalKey<FormState>();
+  final _controller = TextEditingController();
 
   String _subject, _body, _dueDate = " ";
-
-  bool validate() {
-    final form = formKey.currentState;
-    form.save();
-    if (form.validate()) {
-      form.save();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void submit() async {
-    if (validate()) {
-      try {
-        //final auth = Provider.of(context).auth;
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +32,7 @@ class _AddItemPageState extends State<AddItemPage> {
                   [
                     Padding(
                         padding: EdgeInsets.only(left: 20, right: 20, top: 30),
-                        child: Column(children: buildButtons()))
+                        child: Column(children: buildButtons(context)))
                   ],
             ),
           ),
@@ -60,13 +41,17 @@ class _AddItemPageState extends State<AddItemPage> {
     );
   }
 
-  Future _selectDate() async {
-    DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(2016),
-        lastDate: new DateTime(2020));
-    if (picked != null) setState(() => _dueDate = picked.toString());
+  List<Widget> buildButtons(BuildContext context) {
+    return <Widget>[
+      RaisedButton(
+        child: Align(alignment: Alignment.center, child: Text('Save Item')),
+        onPressed: ()=> submit(context),
+      ),
+      // RaisedButton(
+      //   child: Align(alignment: Alignment.center, child: Text('Cancel')),
+      //   onPressed: () {},
+      // ),
+    ];
   }
 
   List<Widget> buildInputs() {
@@ -84,16 +69,26 @@ class _AddItemPageState extends State<AddItemPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Container(
+            //     height: 25,
+            //     padding: EdgeInsets.all(0),
+            //     width: 320, // how to calculate this??
+            //     decoration: new BoxDecoration(
+            //       border: new Border(
+            //         bottom: BorderSide(width: 1.5, color: Colors.grey),
+            //       ),
+            //     ),
+            //     child: Text(_dueDate)),
             Container(
-                height: 25,
-                padding: EdgeInsets.all(0),
-                width: 320, // how to calculate this??
-                decoration: new BoxDecoration(
-                  border: new Border(
-                    bottom: BorderSide(width: 1.5, color: Colors.grey),
-                  ),
-                ),
-                child: Text(_dueDate)),
+              width: 320,
+              child: TextFormField(
+                controller: _controller,
+                enabled: false,
+                enableInteractiveSelection: false,
+                decoration: InputDecoration(labelText: 'Due Date'),
+                onSaved: (value) => _dueDate = value,
+              ),
+            ),
             IconButton(
                 onPressed: _selectDate,
                 icon: new Icon(FontAwesome.getIconData("calendar"))),
@@ -103,16 +98,47 @@ class _AddItemPageState extends State<AddItemPage> {
     ];
   }
 
-  List<Widget> buildButtons() {
-    return <Widget>[
-      RaisedButton(
-        child: Align(alignment: Alignment.center, child: Text('Save Item')),
-        onPressed: submit,
-      ),
-      RaisedButton(
-        child: Align(alignment: Alignment.center, child: Text('Cancel')),
-        onPressed: () {},
-      ),
-    ];
+  void submit(BuildContext context) async {
+    if (validate()) {
+      try {
+        //final auth = Provider.of(context).auth;
+        var i = new Item(_subject, _body, _dueDate);
+        var result = await i.saveItem();
+        if (result != null) {
+          print(result);
+        } else {
+          print("error");
+        }
+
+        // close window
+        Navigator.pop(context);
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
+  bool validate() {
+    final form = formKey.currentState;
+    form.save();
+    if (form.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future _selectDate() async {
+    DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: new DateTime.now(),
+        firstDate: new DateTime(2016),
+        lastDate: new DateTime(2020));
+
+    if (picked != null) {
+      _controller.text = picked.toString();
+      setState(() => _dueDate = picked.toString());
+    }
   }
 }
