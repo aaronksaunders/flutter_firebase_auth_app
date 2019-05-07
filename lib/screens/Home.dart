@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/components/ItemsList.dart';
 import 'package:firebase_auth_app/components/LoadingCircle.dart';
+import 'package:firebase_auth_app/screens/AddItem.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +22,12 @@ class _HomePageState extends State<HomePage> {
       ),
       body: ItemsList(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
+        onPressed: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddItemPage(), fullscreenDialog: true),
+              )
+            },
         tooltip: 'Add Item',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
