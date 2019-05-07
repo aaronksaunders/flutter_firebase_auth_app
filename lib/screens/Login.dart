@@ -13,6 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String _email, _password, _firstName, _lastName;
+  String _pageTitle = "Account Login";
   FormType _formType = FormType.LOGIN;
 
   bool validate() {
@@ -27,7 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _showErrorMessage(_error) {
-
     // if one is open, close it
     _scaffoldKey.currentState
         .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
@@ -85,10 +85,12 @@ class _LoginPageState extends State<LoginPage> {
     if (state == 'register') {
       setState(() {
         _formType = FormType.REGISTER;
+        _pageTitle = 'Account Registration';
       });
     } else {
       setState(() {
         _formType = FormType.LOGIN;
+        _pageTitle = 'Account Login';
       });
     }
   }
@@ -98,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Form Page'),
+        title: Text(_pageTitle),
       ),
       body: Center(
         child: Form(
