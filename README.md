@@ -1,10 +1,25 @@
 # Flutter Firebase Sample App
 
-A new Flutter application.
+A Flutter application integrating Firebase for data storage
+
+- Create Account
+- Login
+- All CRUD actions on data object
+- Flutter Features/Functionality Utilized
+    - Pages
+    - Snackbar
+    - Navigation
+    - Futures
+    - Forms/Form Fields
+    - Date Picker
+    - StatefulWidget
+    - StatelessWidget
+
 
 ### Packages Utilized
 - https://pub.dev/packages/firebase_core
 - https://pub.dartlang.org/packages/cloud_firestore
+- https://pub.dev/packages/flutter_icons
 
 ## Please Follow Firebase Setup Instructions
 - there is no google-services.json including in the project, you will need to create your own
