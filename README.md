@@ -7,11 +7,12 @@ A Flutter application integrating Firebase for data storage
 - All CRUD actions on data object
 - Flutter Features/Functionality Utilized
     - Pages
-    - Snackbar
-    - Navigation
-    - Futures
-    - Forms/Form Fields
-    - Date Picker
+    - Snackbar: showing errors and alerts
+    - Navigation: changing pages and showing modals
+    - Futures: interacting with firebase
+    - Forms/Form Fields: login and creating an account
+    - Date Picker: creating an item
+    - Dismissible: allows user to swipe to delete list item
     - StatefulWidget
     - StatelessWidget
 
