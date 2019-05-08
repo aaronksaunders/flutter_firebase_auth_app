@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/components/ItemsList.dart';
-import 'package:firebase_auth_app/components/LoadingCircle.dart';
 import 'package:firebase_auth_app/screens/AddItem.dart';
 import 'package:flutter/material.dart';
 
@@ -19,13 +18,24 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Flutter Firebase"),
+        actions: <Widget>[
+          new Builder(builder: (context) {
+            return new IconButton(
+                icon: new Icon(Icons.exit_to_app),
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                });
+          })
+        ],
       ),
       body: ItemsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddItemPage(), fullscreenDialog: true),
+                MaterialPageRoute(
+                    builder: (context) => AddItemPage(),
+                    fullscreenDialog: true),
               )
             },
         tooltip: 'Add Item',
