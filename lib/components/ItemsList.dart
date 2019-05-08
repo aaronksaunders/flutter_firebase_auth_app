@@ -20,14 +20,50 @@ class ItemsList extends StatelessWidget {
           itemCount: itemDocs.length,
           itemBuilder: (_, int index) {
             final Item item = Item.fromFirebase(itemDocs[index]);
-            return ListTile(
-              title: Text(item.subject ?? '<No message retrieved>'),
-              subtitle: Text('Due Date ${item.dueDate}'),
-              onTap: () => {FirebaseAuth.instance.signOut()},
-            );
+            return DismissibleItem(item, Key(item.id));
           },
         );
       },
+    );
+  }
+}
+
+class DismissibleItem extends StatelessWidget {
+  final Item item;
+  final Key key;
+
+  DismissibleItem(this.item, this.key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      direction: DismissDirection.endToStart,
+      key: key,
+      background: Container(
+        alignment: AlignmentDirectional.centerEnd,
+        color: Colors.red,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      onDismissed: (direction) async {
+        try {
+          var result = await this.item.deleteItem();
+          if (result != null) {}
+        } catch (e) {
+          print(e);
+          //_showErrorMessage(e);
+        }
+      },
+      child: ListTile(
+        title: Text(item.subject ?? '<No message retrieved>'),
+        subtitle: Text('Due Date ${item.dueDate}'),
+        onTap: () => {},
+      ),
     );
   }
 }

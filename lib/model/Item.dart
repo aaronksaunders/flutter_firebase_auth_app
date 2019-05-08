@@ -45,4 +45,8 @@ class Item {
   static getSnapshot() {
     return Firestore.instance.collection('items').snapshots();
   }
+
+  Future deleteItem() {
+    return Firestore.instance.collection('items').document(this.id).delete();
+  }
 }
