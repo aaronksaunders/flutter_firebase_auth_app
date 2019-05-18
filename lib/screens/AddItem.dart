@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -104,7 +103,7 @@ class _AddItemPageState extends State<AddItemPage> {
   void submit(BuildContext context) async {
     if (validate()) {
       try {
-        var i = new Item(_subject, _body, _dueDate);
+        var i = new Item(subject: _subject, body: _body, dueDate: _dueDate);
         var result = await i.saveItem();
         if (result != null) {
           print(result);

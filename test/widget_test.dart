@@ -5,26 +5,34 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:firebase_auth_app/screens/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:firebase_auth_app/main.dart';
+Widget buildTestableWidget(Widget widget) {
+  // https://docs.flutter.io/flutter/widgets/MediaQuery-class.html
+  return new MediaQuery(
+      data: new MediaQueryData(), child: new MaterialApp(home: widget));
+}
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    // create a LoginPage
+    LoginPage loginPage = new LoginPage();
+    // add it to the widget tester
+    await tester.pumpWidget(buildTestableWidget(loginPage));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // tap on the login button
+    Finder loginButton = find.byKey(Key('login'));
+    expect(loginButton, findsOneWidget);
+    await tester.tap(loginButton);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Verify that our error message is displayed.
+await tester.pump(new Duration(milliseconds: 1000));
     await tester.pump();
+    expect(find.text('The password is invalid or the user does not have a password.'), findsOneWidget, reason:'no error text found');
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.pump();
+    // expect(errorText.toString().contains('invalid'), true);
   });
 }

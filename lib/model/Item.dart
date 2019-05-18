@@ -8,19 +8,15 @@ class Item {
   String owner;
   String id;
 
-  Item(
-    this.subject,
-    this.body,
-    //this.owner,
-    this.dueDate,
-  );
+  Item({this.subject, this.body, this.owner, this.dueDate, this.id});
 
-  Item.fromFirebase(DocumentSnapshot itemSnap) {
-    this.subject = itemSnap.data['content']['subject'];
-    this.body = itemSnap.data['content']['body'];
-    this.dueDate = itemSnap.data['content']['dueDate'];
-    this.owner = itemSnap.data['owner'];
-    this.id = itemSnap.documentID;
+  factory Item.fromSnap(DocumentSnapshot itemSnap) {
+    return Item(
+        subject: itemSnap.data['content']['subject'],
+        body: itemSnap.data['content']['body'],
+        dueDate: itemSnap.data['content']['dueDate'],
+        owner: itemSnap.data['owner'] ?? '',
+        id: itemSnap.documentID ?? null);
   }
 
   Future saveItem() async {
@@ -42,9 +38,6 @@ class Item {
     return response;
   }
 
-  static getSnapshot() {
-    return Firestore.instance.collection('items').snapshots();
-  }
 
   Future deleteItem() {
     return Firestore.instance.collection('items').document(this.id).delete();

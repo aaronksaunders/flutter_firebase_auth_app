@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum FormType { LOGIN, REGISTER }
 
@@ -18,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool validate() {
     final form = formKey.currentState;
+    print('{$_email}, $_password, $_firstName, $_lastName');
     form.save();
     if (form.validate()) {
       form.save();
@@ -33,7 +35,8 @@ class _LoginPageState extends State<LoginPage> {
         .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
 
     SnackBar snackBar = SnackBar(
-      content: Text(_error.message),
+      key: new Key('errorSnackbar'),
+      content: Text(_error.message, key: new Key('errormessage')),
       duration: Duration(seconds: 30),
       backgroundColor: Colors.redAccent,
       action: SnackBarAction(
@@ -97,27 +100,29 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(_pageTitle),
-      ),
-      body: Center(
-        child: Form(
-          key: formKey,
-          child: Container(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: buildInputs(_formType) +
-                  [
-                    Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20, top: 30),
-                        child: Column(children: buildButtons()))
-                  ],
+    return Provider(
+          child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text(_pageTitle),
+        ),
+        body: Center(
+          child: Form(
+            key: formKey,
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: buildInputs(_formType) +
+                    [
+                      Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20, top: 30),
+                          child: Column(children: buildButtons()))
+                    ],
+              ),
             ),
           ),
         ),
-      ),
+      ), builder: (BuildContext context) {},
     );
   }
 
@@ -156,10 +161,12 @@ class _LoginPageState extends State<LoginPage> {
     if (_formType == FormType.LOGIN) {
       return [
         RaisedButton(
+          key: new Key('login'),
           child: Align(alignment: Alignment.center, child: Text('Login')),
           onPressed: submit,
         ),
         RaisedButton(
+          key: new Key('goto-register'),
           child: Align(
               alignment: Alignment.center, child: Text('Register Account')),
           onPressed: () {
@@ -170,12 +177,14 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return [
         RaisedButton(
+          key: new Key('create-account'),
           child:
               Align(alignment: Alignment.center, child: Text('Create Account')),
           onPressed: submit,
         ),
         RaisedButton(
-          child: Align(alignment: Alignment.center, child: Text('Go to Login')),
+          key: new Key('go-back'),
+          child: Align(alignment: Alignment.center, child: Text('Back')),
           onPressed: () {
             switchFormState('login');
           },

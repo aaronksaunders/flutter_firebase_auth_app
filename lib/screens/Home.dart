@@ -22,8 +22,8 @@ class _HomePageState extends State<HomePage> {
           new Builder(builder: (context) {
             return new IconButton(
                 icon: new Icon(Icons.exit_to_app),
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
                 });
           })
         ],
