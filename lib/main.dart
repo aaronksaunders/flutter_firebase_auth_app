@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth_app/components/LoadingCircle.dart';
 import 'package:firebase_auth_app/screens/Home.dart';
 import 'package:firebase_auth_app/screens/Login.dart';
@@ -13,19 +15,28 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics();
+
     return MultiProvider(
       providers: [
         StreamProvider<FirebaseUser>.value(stream: AuthService().user),
-        StreamProvider<List<Item>>.value(
-            stream: DataService().getItemsSnapshot()),
+        StreamProvider<List<Item>>.value(  stream: DataService().getItemsSnapshot() ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.teal,
         ),
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: analytics),
+        ],
         home: StreamBuilder<FirebaseUser>(
             stream: AuthService().user,
             builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {

@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +7,14 @@ class ItemsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var list =
-        Provider.of<List<Item>>(context);
+    var items = Provider.of<List<Item>>(context);
     return ListView.builder(
-        itemCount: list.length,
-        itemBuilder: (_, int index) {
-          final Item item = list[index];
-          return DismissibleItem(item, Key(item.id));
-        });
+      itemCount: items.length,
+      itemBuilder: (_, int index) {
+        final Item item = items[index];
+        return DismissibleItem(item, Key(item.id));
+      },
+    );
   }
 }
 
