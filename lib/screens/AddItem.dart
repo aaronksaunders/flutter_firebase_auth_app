@@ -73,6 +73,8 @@ class _AddItemPageState extends State<AddItemPage> {
         onSaved: (value) => _subject = value,
       ),
       TextFormField(
+        minLines: 3,
+        maxLines: 3,
         decoration: InputDecoration(labelText: 'Body'),
         onSaved: (value) => _body = value,
       ),
