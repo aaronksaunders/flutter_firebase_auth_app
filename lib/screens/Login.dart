@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,14 @@ class _LoginPageState extends State<LoginPage> {
   String _email, _password, _firstName, _lastName;
   String _pageTitle = "Account Login";
   FormType _formType = FormType.LOGIN;
+
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Provider.of<FirebaseAnalytics>(context)
+        .setCurrentScreen(screenName: "LoginPage")
+        .then((v) => {});
+  }
 
   bool validate() {
     final form = formKey.currentState;

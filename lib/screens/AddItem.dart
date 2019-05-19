@@ -1,6 +1,8 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:provider/provider.dart';
 
 class AddItemPage extends StatefulWidget {
   @override
@@ -16,6 +18,14 @@ class _AddItemPageState extends State<AddItemPage> {
   SnackBar snackBar;
 
   String _subject, _body, _dueDate = " ";
+
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Provider.of<FirebaseAnalytics>(context)
+        .setCurrentScreen(screenName: "AddItemPage")
+        .then((v) => {});
+  }
 
   @override
   Widget build(BuildContext context) {

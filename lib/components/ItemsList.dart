@@ -1,4 +1,5 @@
 import 'package:firebase_auth_app/model/Item.dart';
+import 'package:firebase_auth_app/screens/ItemDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +10,7 @@ class ItemsList extends StatelessWidget {
   Widget build(BuildContext context) {
     var items = Provider.of<List<Item>>(context);
     return ListView.builder(
-      itemCount: items.length,
+      itemCount: items != null ? items.length : 0,
       itemBuilder: (_, int index) {
         final Item item = items[index];
         return DismissibleItem(item, Key(item.id));
@@ -52,7 +53,15 @@ class DismissibleItem extends StatelessWidget {
       child: ListTile(
         title: Text(item.subject ?? '<No message retrieved>'),
         subtitle: Text('Due Date ${item.dueDate}'),
-        onTap: () => {},
+        onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ItemDetailPage(itemId: item.id),
+                  settings: RouteSettings(name: "ItemDetailPage")
+                ),
+              ),
+            },
       ),
     );
   }

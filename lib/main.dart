@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './services/auth.dart';
-import './services/data.dart';
-import 'model/Item.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,10 +22,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     FirebaseAnalytics analytics = FirebaseAnalytics();
 
+    analytics.setCurrentScreen(screenName: "Main Screen").then((v) => {});
+
     return MultiProvider(
       providers: [
         StreamProvider<FirebaseUser>.value(stream: AuthService().user),
-        StreamProvider<List<Item>>.value(  stream: DataService().getItemsSnapshot() ),
+        Provider<FirebaseAnalytics>.value( value: analytics),
+        // StreamProvider<List<Item>>.value(  stream: DataService().getItemsSnapshot() ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

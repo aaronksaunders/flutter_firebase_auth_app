@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth_app/components/ItemsList.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/screens/AddItem.dart';
@@ -17,6 +18,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Provider.of<FirebaseAnalytics>(context)
+        .setCurrentScreen(screenName: "HomePage")
+        .then((v) => {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +43,9 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => AddItemPage(), fullscreenDialog: true),
+                builder: (context) => AddItemPage(),
+                settings: RouteSettings(name: "AddItemPage"),
+                fullscreenDialog: true),
           );
         },
         tooltip: 'Add Item',
