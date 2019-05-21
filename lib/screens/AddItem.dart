@@ -19,7 +19,7 @@ class _AddItemPageState extends State<AddItemPage> {
 
   String _subject, _body, _dueDate = " ";
 
-    @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     Provider.of<FirebaseAnalytics>(context)
@@ -71,12 +71,22 @@ class _AddItemPageState extends State<AddItemPage> {
       TextFormField(
         decoration: InputDecoration(labelText: 'Subject'),
         onSaved: (value) => _subject = value,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Please enter some text, Subject Cannot Be Empty';
+          }
+        },
       ),
       TextFormField(
         minLines: 3,
         maxLines: 3,
         decoration: InputDecoration(labelText: 'Body'),
         onSaved: (value) => _body = value,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Please enter some text, Body Cannot Be Empty';
+          }
+        },
       ),
       Padding(
         padding: const EdgeInsets.only(top: 10.0),
@@ -101,6 +111,11 @@ class _AddItemPageState extends State<AddItemPage> {
                 enableInteractiveSelection: false,
                 decoration: InputDecoration(labelText: 'Due Date'),
                 onSaved: (value) => _dueDate = value,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter some text, Subject Cannot Be Empty';
+                  }
+                },
               ),
             ),
             IconButton(
