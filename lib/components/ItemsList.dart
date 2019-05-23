@@ -53,15 +53,15 @@ class DismissibleItem extends StatelessWidget {
       child: ListTile(
         title: Text(item.subject ?? '<No message retrieved>'),
         subtitle: Text('Due Date ${item.dueDate}'),
-        onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ItemDetailPage(itemId: item.id),
-                  settings: RouteSettings(name: "ItemDetailPage")
-                ),
-              ),
-            },
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ItemDetailPage(itemId: item.id),
+              settings: RouteSettings(name: "ItemDetailPage"),
+            ),
+          );
+        },
       ),
     );
   }

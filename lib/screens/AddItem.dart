@@ -20,7 +20,7 @@ class _AddItemPageState extends State<AddItemPage> {
   SnackBar snackBar;
 
   String _subject, _body, _dueDate = " ";
-  Item _currentItem = null;
+  Item _currentItem;
 
   @override
   void didChangeDependencies() async {
