@@ -1,5 +1,6 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import '../model/Item.dart';
 
@@ -23,6 +24,18 @@ class DataService {
         } else {
           return Future<Item>.value(null);
         }
+  }
 
+  Future<ItemOwner> getUserById(String userId) async {
+    var itemOwner = await _db
+        .collection('users')
+        .document(userId)
+        .get();
+
+        if (itemOwner.exists != null) {
+          return Future( () => ItemOwner.fromSnap(itemOwner));
+        } else {
+          return Future<ItemOwner>.value(null);
+        }
   }
 }

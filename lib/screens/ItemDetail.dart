@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class ItemDetailPage extends StatefulWidget {
 class _ItemDetailPageState extends State<ItemDetailPage> {
   String pageTitle = "";
   Future<Item> currentItem;
+  Future<ItemOwner> itemUser;
 
   @override
   void didChangeDependencies() {
@@ -46,10 +48,36 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             future: currentItem,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Text(snapshot.data.body),
+                return Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          snapshot.data.body,
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            snapshot.data.dueDate,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                        FutureBuilder<ItemOwner>(
+                            future: itemUser,
+                            builder: (context, snapshot) {
+                              return Text(
+                                snapshot.data != null
+                                    ? _renderName(snapshot.data)
+                                    : "",
+                                style: TextStyle(fontSize: 18),
+                              );
+                            }),
+                      ],
+                    ),
                   ),
                 );
               } else {
@@ -60,12 +88,17 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     );
   }
 
+  String _renderName(ItemOwner data) {
+    return '${data.firstName} ${data.lastName}';
+  }
+
   void loadItem() async {
     var value = await DataService().getItemById(widget.itemId);
 
     setState(() {
       pageTitle = value.subject;
       currentItem = new Future<Item>(() => value);
+      itemUser = DataService().getUserById(value.owner);
     });
   }
 }
