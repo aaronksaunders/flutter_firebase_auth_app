@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'AddItem.dart';
 
 class ItemDetailPage extends StatefulWidget {
   ItemDetailPage({this.itemId});
@@ -42,6 +43,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
+        actions: <Widget>[EditButton(currentItem)],
       ),
       body: Container(
         child: FutureBuilder<Item>(
@@ -100,5 +102,29 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       currentItem = new Future<Item>(() => value);
       itemUser = DataService().getUserById(value.owner);
     });
+  }
+}
+
+class EditButton extends StatelessWidget {
+  final Future<Item> currentItem;
+
+  const EditButton(
+    this.currentItem, {
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new IconButton(
+        icon: new Icon(Icons.edit),
+        onPressed: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AddItemPage(this.currentItem),
+                settings: RouteSettings(name: "AddItemPage"),
+                fullscreenDialog: true),
+          );
+        });
   }
 }

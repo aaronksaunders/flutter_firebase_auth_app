@@ -19,6 +19,27 @@ class Item {
         id: itemSnap.documentID ?? null);
   }
 
+  Future updateItem(Item currentItem) async {
+    if (currentItem.id == null || currentItem.owner == null) {
+      return new Future(null);
+    }
+
+    var itemMap = {
+      'content': {
+        'dueDate': this.dueDate,
+        'body': this.body,
+        'subject': this.subject
+      },
+      'updated': new DateTime.now().millisecondsSinceEpoch,
+    };
+    itemMap['owner'] = currentItem.owner;
+    var response = Firestore.instance
+        .collection('items')
+        .document(currentItem.id)
+        .setData(itemMap, merge: true);
+    return response;
+  }
+
   Future saveItem() async {
     var user = await FirebaseAuth.instance.currentUser();
     if (user == null) {
@@ -38,13 +59,10 @@ class Item {
     return response;
   }
 
-
   Future deleteItem() {
     return Firestore.instance.collection('items').document(this.id).delete();
   }
 }
-
-
 
 class ItemOwner {
   String email;
@@ -80,7 +98,6 @@ class ItemOwner {
   //   var response = Firestore.instance.collection('items').add(itemMap);
   //   return response;
   // }
-
 
   // Future deleteItem() {
   //   return Firestore.instance.collection('items').document(this.id).delete();

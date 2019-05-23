@@ -5,11 +5,13 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 class AddItemPage extends StatefulWidget {
+  final Future<Item> currentItem;
+
+  AddItemPage([this.currentItem]);
+
   @override
   _AddItemPageState createState() => _AddItemPageState();
 }
-
-enum FormType { LOGIN, REGISTER }
 
 class _AddItemPageState extends State<AddItemPage> {
   final formKey = GlobalKey<FormState>();
@@ -18,9 +20,10 @@ class _AddItemPageState extends State<AddItemPage> {
   SnackBar snackBar;
 
   String _subject, _body, _dueDate = " ";
+  Item _currentItem = null;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     Provider.of<FirebaseAnalytics>(context)
         .setCurrentScreen(screenName: "AddItemPage")
@@ -39,14 +42,24 @@ class _AddItemPageState extends State<AddItemPage> {
           key: formKey,
           child: Container(
             padding: EdgeInsets.all(20),
-            child: Column(
-              children: buildInputs() +
-                  [
-                    Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20, top: 30),
-                        child: Column(children: buildButtons(context)))
-                  ],
-            ),
+            child: FutureBuilder<Item>(
+                // if we are editing then we were passed in a future object to
+                // load, otherwise create a blank item
+                future: widget.currentItem ?? new Future<Item>(() => Item()),
+                builder: (context, snapshot) {
+                  return Column(
+                    children: buildInputs(snapshot) +
+                        [
+                          Padding(
+                            padding:
+                                EdgeInsets.only(left: 20, right: 20, top: 30),
+                            child: Column(
+                              children: buildButtons(context),
+                            ),
+                          )
+                        ],
+                  );
+                }),
           ),
         ),
       ),
@@ -66,10 +79,21 @@ class _AddItemPageState extends State<AddItemPage> {
     ];
   }
 
-  List<Widget> buildInputs() {
+  List<Widget> buildInputs(AsyncSnapshot<Item> snap) {
+    // if i have no data yet, then exit
+    if (snap.hasData == false) return [];
+
+    // if we have data then set the dueDate text from the data
+    _controller.text = snap.data.dueDate;
+
+    // if we have id then set it, we will use this to determine
+    // if we need to save or create the item
+    _currentItem = snap.data;
+
     return <Widget>[
       TextFormField(
         decoration: InputDecoration(labelText: 'Subject'),
+        initialValue: snap.data.subject,
         onSaved: (value) => _subject = value,
         validator: (value) {
           if (value.isEmpty) {
@@ -80,6 +104,7 @@ class _AddItemPageState extends State<AddItemPage> {
       TextFormField(
         minLines: 3,
         maxLines: 3,
+        initialValue: snap.data.body,
         decoration: InputDecoration(labelText: 'Body'),
         onSaved: (value) => _body = value,
         validator: (value) {
@@ -93,16 +118,6 @@ class _AddItemPageState extends State<AddItemPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Container(
-            //     height: 25,
-            //     padding: EdgeInsets.all(0),
-            //     width: 320, // how to calculate this??
-            //     decoration: new BoxDecoration(
-            //       border: new Border(
-            //         bottom: BorderSide(width: 1.5, color: Colors.grey),
-            //       ),
-            //     ),
-            //     child: Text(_dueDate)),
             Container(
               width: 320,
               child: TextFormField(
@@ -128,10 +143,19 @@ class _AddItemPageState extends State<AddItemPage> {
   }
 
   void submit(BuildContext context) async {
+    var result;
+
     if (validate()) {
       try {
         var i = new Item(subject: _subject, body: _body, dueDate: _dueDate);
-        var result = await i.saveItem();
+
+        // if I have _currentItem, then set some properties
+
+        if (_currentItem.id != null) {
+          result = await i.updateItem(_currentItem);
+        } else {
+          result = await i.saveItem();
+        }
         if (result != null) {
           print(result);
         } else {
@@ -172,10 +196,15 @@ class _AddItemPageState extends State<AddItemPage> {
     }
   }
 
+  //
+  // @todo - convert string date to date time for display when editing
+  // the item
+  //
   Future _selectDate() async {
     DateTime picked = await showDatePicker(
         context: context,
-        initialDate: new DateTime.now(),
+        initialDate:
+            _controller.text != null ? new DateTime.now() : new DateTime.now(),
         firstDate: new DateTime(2019),
         lastDate: new DateTime(2022));
 
