@@ -16,6 +16,7 @@ A Flutter application integrating Firebase for data storage
     - StatefulWidget
     - StatelessWidget
 
+Watch Video Here: https://video.twimg.com/ext_tw_video/1126242410512769026/pu/vid/612x1280/oqi7wxmGwVh2z-CD.mp4?tag=9
 
 ### Packages Utilized
 - https://pub.dev/packages/firebase_core
