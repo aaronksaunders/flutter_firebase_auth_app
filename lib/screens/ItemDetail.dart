@@ -19,7 +19,7 @@ class ItemDetailPage extends StatefulWidget {
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
   String pageTitle = "";
-  Future<Item> currentItem;
+  Item currentItem;
   Future<ItemOwner> itemUser;
 
   @override
@@ -48,16 +48,12 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         ],
       ),
       body: Container(
-        child: FutureBuilder<List<dynamic>>(
-            future: Future.wait([
-              currentItem,
-              itemUser,
-            ]),
+        child: FutureBuilder<ItemOwner>(
+            future: itemUser,
             builder: (context, snapshot) {
 
               if (snapshot.hasData == true) {
-                var item = snapshot.data[0];
-                var itemOwner = snapshot.data[1];
+                var itemOwner = snapshot.data;
 
                 return Padding(
                   padding: const EdgeInsets.all(14.0),
@@ -65,7 +61,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          item.body,
+                          currentItem.body,
                           style: TextStyle(
                             fontSize: 20,
                           ),
@@ -73,12 +69,12 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            item.dueDate,
+                            currentItem.dueDate,
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
                         Text(
-                          item != null
+                          currentItem != null
                               ? _renderName(itemOwner)
                               : "",
                           style: TextStyle(fontSize: 18),
@@ -105,7 +101,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 
       setState(() {
         pageTitle = value.subject;
-        currentItem = new Future.value(value);
+        currentItem = value;
         itemUser = DataService().getUserById(value.owner);
       });
     } catch (e) {
@@ -115,7 +111,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 }
 
 class EditButton extends StatelessWidget {
-  final Future<Item> currentItem;
+  final Item currentItem;
   final Function completion;
 
   const EditButton(

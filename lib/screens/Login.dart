@@ -13,12 +13,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var _showModal = false;
 
   String _email, _password, _firstName, _lastName;
   String _pageTitle = "Account Login";
   FormType _formType = FormType.LOGIN;
 
-    @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     Provider.of<FirebaseAnalytics>(context)
@@ -67,6 +68,9 @@ class _LoginPageState extends State<LoginPage> {
 
   void submit() async {
     if (validate()) {
+      setState(() {
+        _showModal = true;
+      });
       try {
         //final auth = Provider.of(context).auth;
         if (_formType == FormType.LOGIN) {
@@ -84,7 +88,14 @@ class _LoginPageState extends State<LoginPage> {
 
           print('Registered ${user.uid}');
         }
+
+        setState(() {
+          _showModal = false;
+        });
       } catch (e) {
+        setState(() {
+          _showModal = false;
+        });
         print(e);
         _showErrorMessage(e);
       }
@@ -110,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Provider(
-          child: Scaffold(
+      child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text(_pageTitle),
@@ -124,15 +135,32 @@ class _LoginPageState extends State<LoginPage> {
                 children: buildInputs(_formType) +
                     [
                       Padding(
-                          padding: EdgeInsets.only(left: 20, right: 20, top: 30),
-                          child: Column(children: buildButtons()))
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, top: 30),
+                          child: Column(children: buildButtons())),
                     ],
               ),
             ),
           ),
         ),
-      ), builder: (BuildContext context) {},
+      ),
+      builder: (BuildContext context) {},
     );
+  }
+
+  _buildLoader() {
+    var modal = new Stack(
+      children: [
+        new Opacity(
+          opacity: 0.3,
+          child: const ModalBarrier(dismissible: false, color: Colors.grey),
+        ),
+        new Center(
+          child: new CircularProgressIndicator(),
+        ),
+      ],
+    );
+    return modal;
   }
 
   List<Widget> buildInputs(FormType formType) {
@@ -150,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
     ];
 
     if (formType == FormType.REGISTER) {
-      return base +
+      base = base +
           <Widget>[
             TextFormField(
               decoration: InputDecoration(labelText: 'First Name'),
@@ -161,9 +189,10 @@ class _LoginPageState extends State<LoginPage> {
               onSaved: (value) => _lastName = value,
             )
           ];
-    } else {
-      return base;
     }
+
+    if (_showModal == true) base.add(_buildLoader());
+    return base;
   }
 
   List<Widget> buildButtons() {

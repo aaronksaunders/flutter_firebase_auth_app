@@ -5,7 +5,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 class AddItemPage extends StatefulWidget {
-  final Future<Item> currentItem;
+  final Item currentItem;
 
   AddItemPage([this.currentItem]);
 
@@ -32,6 +32,8 @@ class _AddItemPageState extends State<AddItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    var snapshot = widget.currentItem ?? Item();
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -42,24 +44,17 @@ class _AddItemPageState extends State<AddItemPage> {
           key: formKey,
           child: Container(
             padding: EdgeInsets.all(20),
-            child: FutureBuilder<Item>(
-                // if we are editing then we were passed in a future object to
-                // load, otherwise create a blank item
-                future: widget.currentItem ?? new Future<Item>(() => Item()),
-                builder: (context, snapshot) {
-                  return Column(
-                    children: buildInputs(snapshot) +
-                        [
-                          Padding(
-                            padding:
-                                EdgeInsets.only(left: 20, right: 20, top: 30),
-                            child: Column(
-                              children: buildButtons(context),
-                            ),
-                          )
-                        ],
-                  );
-                }),
+            child: Column(
+              children: buildInputs(snapshot) +
+                  [
+                    Padding(
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 30),
+                      child: Column(
+                        children: buildButtons(context),
+                      ),
+                    )
+                  ],
+            ),
           ),
         ),
       ),
@@ -79,21 +74,18 @@ class _AddItemPageState extends State<AddItemPage> {
     ];
   }
 
-  List<Widget> buildInputs(AsyncSnapshot<Item> snap) {
-    // if i have no data yet, then exit
-    if (snap.hasData == false) return [];
-
+  List<Widget> buildInputs(Item snap) {
     // if we have data then set the dueDate text from the data
-    _controller.text = snap.data.dueDate;
+    _controller.text = snap.dueDate;
 
     // if we have id then set it, we will use this to determine
     // if we need to save or create the item
-    _currentItem = snap.data;
+    _currentItem = snap;
 
     return <Widget>[
       TextFormField(
         decoration: InputDecoration(labelText: 'Subject'),
-        initialValue: snap.data.subject,
+        initialValue: snap.subject,
         onSaved: (value) => _subject = value,
         validator: (value) {
           if (value.isEmpty) {
@@ -104,7 +96,7 @@ class _AddItemPageState extends State<AddItemPage> {
       TextFormField(
         minLines: 3,
         maxLines: 3,
-        initialValue: snap.data.body,
+        initialValue: snap.body,
         decoration: InputDecoration(labelText: 'Body'),
         onSaved: (value) => _body = value,
         validator: (value) {
@@ -143,7 +135,6 @@ class _AddItemPageState extends State<AddItemPage> {
   }
 
   void submit(BuildContext context) async {
-
     if (validate()) {
       try {
         var i = new Item(subject: _subject, body: _body, dueDate: _dueDate);

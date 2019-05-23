@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder<FirebaseUser>(
             stream: AuthService().user,
             builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
+              print(snapshot.connectionState);
               if (snapshot.connectionState == ConnectionState.active) {
                 final bool loggedIn = snapshot.hasData;
                 return loggedIn ? HomePage() : LoginPage();
