@@ -32,9 +32,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     loadItem();
   }
 
@@ -50,17 +48,24 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         ],
       ),
       body: Container(
-        child: FutureBuilder<Item>(
-            future: currentItem,
+        child: FutureBuilder<List<dynamic>>(
+            future: Future.wait([
+              currentItem,
+              itemUser,
+            ]),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
+
+              if (snapshot.hasData == true) {
+                var item = snapshot.data[0];
+                var itemOwner = snapshot.data[1];
+
                 return Padding(
                   padding: const EdgeInsets.all(14.0),
                   child: Center(
                     child: Column(
                       children: <Widget>[
                         Text(
-                          snapshot.data.body,
+                          item.body,
                           style: TextStyle(
                             fontSize: 20,
                           ),
@@ -68,20 +73,16 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            snapshot.data.dueDate,
+                            item.dueDate,
                             style: TextStyle(fontSize: 18),
                           ),
                         ),
-                        FutureBuilder<ItemOwner>(
-                            future: itemUser,
-                            builder: (context, snapshot) {
-                              return Text(
-                                snapshot.data != null
-                                    ? _renderName(snapshot.data)
-                                    : "",
-                                style: TextStyle(fontSize: 18),
-                              );
-                            }),
+                        Text(
+                          item != null
+                              ? _renderName(itemOwner)
+                              : "",
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ],
                     ),
                   ),

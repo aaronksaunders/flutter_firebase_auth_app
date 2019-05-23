@@ -143,7 +143,6 @@ class _AddItemPageState extends State<AddItemPage> {
   }
 
   void submit(BuildContext context) async {
-    var result;
 
     if (validate()) {
       try {
@@ -152,21 +151,16 @@ class _AddItemPageState extends State<AddItemPage> {
         // if I have _currentItem, then set some properties
         try {
           if (_currentItem.id != null) {
-            result = await i.updateItem(_currentItem);
+            await i.updateItem(_currentItem);
           } else {
-            result = await i.saveItem();
-          }
-          if (result != null) {
-            print(result);
-          } else {
-            print("error");
+            await i.saveItem();
           }
         } catch (e) {
           print(e);
         }
         snackBar = SnackBar(
           content: Text('Item Added Successfully!'),
-          duration: Duration(seconds: 30),
+          duration: Duration(seconds: 10),
           action: SnackBarAction(
             label: 'Close',
             onPressed: () {
@@ -180,7 +174,9 @@ class _AddItemPageState extends State<AddItemPage> {
         // Find the Scaffold in the Widget tree and use it to show a SnackBar!
         _scaffoldKey.currentState.showSnackBar(snackBar).closed.then((reason) {
           // snackbar is now closed, close window
-          Navigator.pop(context);
+          Navigator.pop(
+            context,
+          );
         });
       } catch (e) {
         print(e);
