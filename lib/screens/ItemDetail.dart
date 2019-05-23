@@ -43,7 +43,11 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
-        actions: <Widget>[EditButton(currentItem)],
+        actions: <Widget>[
+          EditButton(currentItem, () {
+            loadItem();
+          })
+        ],
       ),
       body: Container(
         child: FutureBuilder<Item>(
@@ -94,22 +98,28 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     return '${data.firstName} ${data.lastName}';
   }
 
-  void loadItem() async {
-    var value = await DataService().getItemById(widget.itemId);
+  loadItem() async {
+    try {
+      var value = await DataService().getItemById(widget.itemId);
 
-    setState(() {
-      pageTitle = value.subject;
-      currentItem = new Future<Item>(() => value);
-      itemUser = DataService().getUserById(value.owner);
-    });
+      setState(() {
+        pageTitle = value.subject;
+        currentItem = new Future.value(value);
+        itemUser = DataService().getUserById(value.owner);
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
 class EditButton extends StatelessWidget {
   final Future<Item> currentItem;
+  final Function completion;
 
   const EditButton(
-    this.currentItem, {
+    this.currentItem,
+    this.completion, {
     Key key,
   }) : super(key: key);
 
@@ -121,10 +131,14 @@ class EditButton extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => AddItemPage(this.currentItem),
-                settings: RouteSettings(name: "AddItemPage"),
-                fullscreenDialog: true),
-          );
+              builder: (context) => AddItemPage(this.currentItem),
+              settings: RouteSettings(name: "AddItemPage"),
+              fullscreenDialog: true,
+            ),
+          ).then((value) {
+            this.completion();
+          });
+          return true;
         });
   }
 }

@@ -33,11 +33,11 @@ class Item {
       'updated': new DateTime.now().millisecondsSinceEpoch,
     };
     itemMap['owner'] = currentItem.owner;
-    var response = Firestore.instance
+    Firestore.instance
         .collection('items')
         .document(currentItem.id)
         .setData(itemMap, merge: true);
-    return response;
+    return Future.value(true);
   }
 
   Future saveItem() async {

@@ -150,16 +150,19 @@ class _AddItemPageState extends State<AddItemPage> {
         var i = new Item(subject: _subject, body: _body, dueDate: _dueDate);
 
         // if I have _currentItem, then set some properties
-
-        if (_currentItem.id != null) {
-          result = await i.updateItem(_currentItem);
-        } else {
-          result = await i.saveItem();
-        }
-        if (result != null) {
-          print(result);
-        } else {
-          print("error");
+        try {
+          if (_currentItem.id != null) {
+            result = await i.updateItem(_currentItem);
+          } else {
+            result = await i.saveItem();
+          }
+          if (result != null) {
+            print(result);
+          } else {
+            print("error");
+          }
+        } catch (e) {
+          print(e);
         }
         snackBar = SnackBar(
           content: Text('Item Added Successfully!'),
