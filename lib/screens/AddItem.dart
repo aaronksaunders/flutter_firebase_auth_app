@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth_app/components/MessageSnack.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -139,38 +140,17 @@ class _AddItemPageState extends State<AddItemPage> {
       try {
         var i = new Item(subject: _subject, body: _body, dueDate: _dueDate);
 
-        // if I have _currentItem, then set some properties
-        try {
-          if (_currentItem.id != null) {
-            await i.updateItem(_currentItem);
-          } else {
-            await i.saveItem();
-          }
-        } catch (e) {
-          print(e);
+        if (_currentItem.id != null) {
+          await i.updateItem(_currentItem);
+        } else {
+          await i.saveItem();
         }
-        snackBar = SnackBar(
-          content: Text('Item Added Successfully!'),
-          duration: Duration(seconds: 10),
-          action: SnackBarAction(
-            label: 'Close',
-            onPressed: () {
-              // Some code to undo the change!
-              _scaffoldKey.currentState
-                  .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
-            },
-          ),
-        );
 
-        // Find the Scaffold in the Widget tree and use it to show a SnackBar!
-        _scaffoldKey.currentState.showSnackBar(snackBar).closed.then((reason) {
-          // snackbar is now closed, close window
-          Navigator.pop(
-            context,
-          );
-        });
-      } catch (e) {
-        print(e);
+        MessageSnack().showInfoMessage('Item Added Successfully!', _scaffoldKey,
+            () => Navigator.pop(context));
+      } catch (error) {
+        print(error);
+        MessageSnack().showErrorMessage(error, _scaffoldKey);
       }
     }
   }

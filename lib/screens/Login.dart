@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_app/components/MessageSnack.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
@@ -41,33 +42,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  _showErrorMessage(_error) {
-    // if one is open, close it
-    _scaffoldKey.currentState
-        .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
-
-    SnackBar snackBar = SnackBar(
-      key: new Key('errorSnackbar'),
-      content: Text(_error.message, key: new Key('errormessage')),
-      duration: Duration(seconds: 5),
-      backgroundColor: Colors.redAccent,
-      action: SnackBarAction(
-        label: 'Close',
-        textColor: Colors.white,
-        onPressed: () {
-          // Some code to undo the change!
-          _scaffoldKey.currentState
-              .hideCurrentSnackBar(reason: SnackBarClosedReason.action);
-        },
-      ),
-    );
-
-    // Find the Scaffold in the Widget tree and use it to show a SnackBar!
-    _scaffoldKey.currentState.showSnackBar(snackBar).closed.then((reason) {
-      // snackbar is now closed, close window
-    });
-  }
-
   void submit() async {
     if (validate()) {
       try {
@@ -94,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       } catch (e) {
         print(e);
-        _showErrorMessage(e);
+        MessageSnack().showErrorMessage(e, _scaffoldKey);
       } finally {
         setState(() {
           _loading = false;
