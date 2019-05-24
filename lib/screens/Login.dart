@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 
 enum FormType { LOGIN, REGISTER }
@@ -14,11 +15,13 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // state variables
   String _email, _password, _firstName, _lastName;
   String _pageTitle = "Account Login";
   FormType _formType = FormType.LOGIN;
+  bool _loading = false;
 
-    @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     Provider.of<FirebaseAnalytics>(context)
@@ -46,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
     SnackBar snackBar = SnackBar(
       key: new Key('errorSnackbar'),
       content: Text(_error.message, key: new Key('errormessage')),
-      duration: Duration(seconds: 30),
+      duration: Duration(seconds: 5),
       backgroundColor: Colors.redAccent,
       action: SnackBarAction(
         label: 'Close',
@@ -68,8 +71,12 @@ class _LoginPageState extends State<LoginPage> {
   void submit() async {
     if (validate()) {
       try {
+        setState(() {
+          _loading = true;
+        });
         //final auth = Provider.of(context).auth;
         if (_formType == FormType.LOGIN) {
+          // Login user using firebase API
           FirebaseUser user =
               await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _email,
@@ -78,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
 
           print('Signed in ${user.uid}');
         } else {
+          // Create New User user using firebase API
           FirebaseUser user = await FirebaseAuth.instance
               .createUserWithEmailAndPassword(
                   email: _email, password: _password);
@@ -87,6 +95,10 @@ class _LoginPageState extends State<LoginPage> {
       } catch (e) {
         print(e);
         _showErrorMessage(e);
+      } finally {
+        setState(() {
+          _loading = false;
+        });
       }
     }
   }
@@ -109,29 +121,30 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-          child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text(_pageTitle),
-        ),
-        body: Center(
-          child: Form(
-            key: formKey,
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: buildInputs(_formType) +
-                    [
-                      Padding(
-                          padding: EdgeInsets.only(left: 20, right: 20, top: 30),
-                          child: Column(children: buildButtons()))
-                    ],
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text(_pageTitle),
+      ),
+      body: ModalProgressHUD(
+          child: Center(
+            child: Form(
+              key: formKey,
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: buildInputs(_formType) +
+                      [
+                        Padding(
+                            padding:
+                                EdgeInsets.only(left: 20, right: 20, top: 30),
+                            child: Column(children: buildButtons()))
+                      ],
+                ),
               ),
             ),
           ),
-        ),
-      ), builder: (BuildContext context) {},
+          inAsyncCall: _loading),
     );
   }
 
