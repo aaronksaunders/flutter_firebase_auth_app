@@ -29,10 +29,9 @@ class MyApp extends StatelessWidget {
       providers: [
         StreamProvider<FirebaseUser>.value(stream: AuthService().user),
         Provider<FirebaseAnalytics>.value(value: analytics),
-        Provider<MenuDrawer>.value(
-          value: MenuDrawer(),
+        Provider<ActiveMenu>.value(
+          value: ActiveMenu("HomePage"),
         )
-        // StreamProvider<List<Item>>.value(  stream: DataService().getItemsSnapshot() ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

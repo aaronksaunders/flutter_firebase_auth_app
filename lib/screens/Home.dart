@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
         child: ItemsList(),
       ),
       drawer: Drawer(
-        child: Provider.of<MenuDrawer>(context),
+        child: MenuDrawer(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

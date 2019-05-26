@@ -1,6 +1,5 @@
 import 'package:firebase_auth_app/components/MenuDrawer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -17,7 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: Text('Settings Flutter Firebase  Content'),
       drawer: Drawer(
-        child: Provider.of<MenuDrawer>(context),
+        child: MenuDrawer(),
       ),
     );
   }

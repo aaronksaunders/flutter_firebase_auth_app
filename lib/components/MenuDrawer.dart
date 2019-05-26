@@ -2,23 +2,42 @@ import 'package:firebase_auth_app/screens/About.dart';
 import 'package:firebase_auth_app/screens/Home.dart';
 import 'package:firebase_auth_app/screens/Settings.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class MenuDrawer extends StatefulWidget {
+class ActiveMenu with ChangeNotifier {
   String _currentMenuItem = "HomePage";
 
-  // MenuDrawer({
-  //   Key key,
-  // }) : super(key: key);
-
-  @override
-  _MenuDrawerState createState() => _MenuDrawerState();
+  ActiveMenu(this._currentMenuItem);
+  getActiveMenu() => _currentMenuItem;
+  setActiveMenu(String _menuItem) => _currentMenuItem = _menuItem;
 }
 
-class _MenuDrawerState extends State<MenuDrawer> {
+
+class MenuDrawer extends StatelessWidget{
+  final Map<String, dynamic> menus = {
+    'Home': {
+      'name': "HomePage",
+      'labelText': "Home",
+      'component': HomePage(),
+      'icon': new Icon(Icons.home)
+    },
+    'Settings': {
+      'name': "SettingsPage",
+      'labelText': "Application Settings",
+      'component': SettingsPage(),
+      'icon': new Icon(Icons.settings)
+    },
+    "About": {
+      'name': "AboutPage",
+      'labelText': "About This App",
+      'component': AboutPage(),
+      'icon': new Icon(Icons.info)
+    }
+  };
+
   Future _gotoPage(Widget _page, BuildContext _context) {
-    setState(() {
-      widget._currentMenuItem = _page.runtimeType.toString();
-    });
+    Provider.of<ActiveMenu>(_context)
+        .setActiveMenu(_page.runtimeType.toString());
     Navigator.of(_context).pop();
     return Navigator.of(_context).pushReplacement(
       MaterialPageRoute(
@@ -37,43 +56,56 @@ class _MenuDrawerState extends State<MenuDrawer> {
           DrawerHeader(
             child: Text('Drawer Header '),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.teal.shade300,
             ),
           ),
-          ListTile(
-            title: Text(
-              'Home',
-              style: widget._currentMenuItem == "HomePage"
-                  ? TextStyle(fontWeight: FontWeight.bold)
-                  : TextStyle(fontWeight: FontWeight.normal),
-            ),
-            onTap: () {
-              _gotoPage(HomePage(), context);
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Settings',
-              style: widget._currentMenuItem == "SettingsPage"
-                  ? TextStyle(fontWeight: FontWeight.bold)
-                  : TextStyle(fontWeight: FontWeight.normal),
-            ),
-            onTap: () {
-              _gotoPage(SettingsPage(), context);
-            },
-          ),
-          ListTile(
-            title: Text(
-              'About This App',
-              style: widget._currentMenuItem == "AboutPage"
-                  ? TextStyle(fontWeight: FontWeight.bold)
-                  : TextStyle(fontWeight: FontWeight.normal),
-            ),
-            onTap: () {
-              _gotoPage(AboutPage(), context);
-            },
-          ),
+          ...getMenuItems(context),
         ],
+      ),
+    );
+  }
+
+  List<Widget> getMenuItems(_context) {
+    List<Widget> items = [];
+    menus.forEach((String _key, dynamic _value) {
+      var item = buildMenuEntryContainer(_context, _key);
+      items.add(item);
+    });
+    return items;
+  }
+
+  Container buildMenuEntryContainer(BuildContext context, String menuName) {
+    // get the require values
+    var menu = menus[menuName];
+
+    // determine if this menu item is selected/active
+    var isSelected =
+        Provider.of<ActiveMenu>(context).getActiveMenu() == menu['name'];
+
+    // set properties based on application state
+    var _textStyle =
+        TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal);
+    var _boxDecoration = isSelected
+        ? BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            color: Colors.teal.shade100,
+          )
+        : BoxDecoration();
+
+    // create the menu item widget
+    return Container(
+      margin: EdgeInsets.only(left: 6.0, right: 6.0),
+      decoration: _boxDecoration,
+      child: ListTile(
+        leading: menu['icon'],
+        selected: isSelected,
+        title: Text(
+          menu['labelText'],
+          style: _textStyle,
+        ),
+        onTap: () {
+          _gotoPage(menu['component'], context);
+        },
       ),
     );
   }
