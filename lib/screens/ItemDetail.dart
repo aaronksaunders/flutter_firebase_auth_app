@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth_app/components/ItemDetailForm.dart';
+import 'package:firebase_auth_app/components/MessageSnack.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,7 @@ class ItemDetailPage extends StatefulWidget {
 }
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   String pageTitle = "";
   Item currentItem;
   Future<ItemOwner> itemUser;
@@ -41,61 +44,13 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
-        actions: <Widget>[
-          EditButton(currentItem, () {
-            loadItem();
-          })
-        ],
+        actions: <Widget>[EditButton(currentItem, loadItem)],
       ),
-      body: Container(
-        child: FutureBuilder<ItemOwner>(
-            future: itemUser,
-            builder: (context, snapshot) {
-
-              if (snapshot.hasData == true) {
-                var itemOwner = snapshot.data;
-
-                return Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          currentItem.body,
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            currentItem.dueDate,
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                        Text(
-                          currentItem != null
-                              ? _renderName(itemOwner)
-                              : "",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            }),
-      ),
+      body: new ItemDetailForm(itemUser: itemUser, currentItem: currentItem),
     );
   }
 
-  String _renderName(ItemOwner data) {
-    return '${data.firstName} ${data.lastName}';
-  }
-
-  loadItem() async {
+  void loadItem() async {
     try {
       var value = await DataService().getItemById(widget.itemId);
 
@@ -106,6 +61,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       });
     } catch (e) {
       print(e);
+      MessageSnack().showErrorMessage(e.message, _scaffoldKey);
     }
   }
 }
