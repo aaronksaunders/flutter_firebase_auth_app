@@ -12,8 +12,14 @@ class ActiveMenu with ChangeNotifier {
   setActiveMenu(String _menuItem) => _currentMenuItem = _menuItem;
 }
 
+class MenuDrawer extends StatefulWidget {
+  @override
+  _MenuDrawerState createState() => _MenuDrawerState();
+}
 
-class MenuDrawer extends StatelessWidget{
+class _MenuDrawerState extends State<MenuDrawer> {
+  String activeMenu;
+
   final Map<String, dynamic> menus = {
     'Home': {
       'name': "HomePage",
@@ -35,15 +41,22 @@ class MenuDrawer extends StatelessWidget{
     }
   };
 
-  Future _gotoPage(Widget _page, BuildContext _context) {
+  void _gotoPage(Widget _page, BuildContext _context) {
     Provider.of<ActiveMenu>(_context)
         .setActiveMenu(_page.runtimeType.toString());
-    Navigator.of(_context).pop();
-    return Navigator.of(_context).pushReplacement(
-      MaterialPageRoute(
-          settings: RouteSettings(name: _page.runtimeType.toString()),
-          builder: (BuildContext context) => _page),
-    );
+
+    setState(() {
+      activeMenu = _page.runtimeType.toString();
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+            Navigator.of(_context).pop();
+      Navigator.of(_context).pushReplacement(
+        MaterialPageRoute(
+            settings: RouteSettings(name: _page.runtimeType.toString()),
+            builder: (BuildContext context) => _page),
+      );
+    });
   }
 
   @override
@@ -74,7 +87,7 @@ class MenuDrawer extends StatelessWidget{
     return items;
   }
 
-  Container buildMenuEntryContainer(BuildContext context, String menuName) {
+  Widget buildMenuEntryContainer(BuildContext context, String menuName) {
     // get the require values
     var menu = menus[menuName];
 
@@ -93,7 +106,7 @@ class MenuDrawer extends StatelessWidget{
         : BoxDecoration();
 
     // create the menu item widget
-    return Container(
+    return AnimatedContainer(
       margin: EdgeInsets.only(left: 6.0, right: 6.0),
       decoration: _boxDecoration,
       child: ListTile(
@@ -107,6 +120,7 @@ class MenuDrawer extends StatelessWidget{
           _gotoPage(menu['component'], context);
         },
       ),
+      duration: Duration(seconds: 1),
     );
   }
 }
