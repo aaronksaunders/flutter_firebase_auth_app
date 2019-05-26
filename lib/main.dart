@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth_app/components/LoadingCircle.dart';
+import 'package:firebase_auth_app/components/MenuDrawer.dart';
 import 'package:firebase_auth_app/screens/Home.dart';
 import 'package:firebase_auth_app/screens/Login.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<FirebaseUser>.value(stream: AuthService().user),
-        Provider<FirebaseAnalytics>.value( value: analytics),
+        Provider<FirebaseAnalytics>.value(value: analytics),
+        Provider<MenuDrawer>.value(
+          value: MenuDrawer(),
+        )
         // StreamProvider<List<Item>>.value(  stream: DataService().getItemsSnapshot() ),
       ],
       child: MaterialApp(

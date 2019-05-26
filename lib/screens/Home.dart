@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth_app/components/ItemsList.dart';
+import 'package:firebase_auth_app/components/MenuDrawer.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/screens/AddItem.dart';
 import 'package:firebase_auth_app/services/auth.dart';
@@ -37,6 +38,9 @@ class _HomePageState extends State<HomePage> {
         // updated appropriately
         stream: DataService().getItemsSnapshot(),
         child: ItemsList(),
+      ),
+      drawer: Drawer(
+        child: Provider.of<MenuDrawer>(context),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
