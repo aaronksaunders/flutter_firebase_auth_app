@@ -1,21 +1,29 @@
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/screens/ItemDetail.dart';
+import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ItemsList extends StatelessWidget {
-  ItemsList();
 
   @override
   Widget build(BuildContext context) {
-    var items = Provider.of<List<Item>>(context);
-    return ListView.builder(
-      itemCount: items != null ? items.length : 0,
-      itemBuilder: (_, int index) {
-        final Item item = items[index];
-        return DismissibleItem(item, Key(item.id));
-      },
-    );
+    return StreamBuilder<List<Item>>(
+        stream: DataService().getItemsSnapshot(),
+        builder: (context, AsyncSnapshot<List<Item>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            var items = snapshot.data;
+
+            return ListView.builder(
+              itemCount: items != null ? items.length : 0,
+              itemBuilder: (_, int index) {
+                final Item item = items[index];
+                return DismissibleItem(item, Key(item.id));
+              },
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 }
 

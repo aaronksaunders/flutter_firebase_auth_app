@@ -1,6 +1,4 @@
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import '../model/Item.dart';
 
@@ -9,9 +7,15 @@ class DataService {
   final Firestore _db = Firestore.instance;
 
   Stream<List<Item>> getItemsSnapshot() {
-
+    
     try {
-      return _db.collection('items').snapshots().map(
+      var snaps = _db.collection('items').snapshots();
+      snaps.handleError((e) {
+        print(e);
+        return Stream.empty();
+      });
+
+      return snaps.map(
           (list) => list.documents.map((doc) => Item.fromSnap(doc)).toList());
     } catch (e) {
       return Stream.empty();

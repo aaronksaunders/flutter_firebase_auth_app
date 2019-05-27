@@ -1,13 +1,13 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/components/ItemsList.dart';
 import 'package:firebase_auth_app/components/MenuDrawer.dart';
-import 'package:firebase_auth_app/model/Item.dart';
+
 import 'package:firebase_auth_app/screens/AddItem.dart';
-import 'package:firebase_auth_app/screens/Login.dart';
 import 'package:firebase_auth_app/services/auth.dart';
-import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'Login.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -22,26 +22,35 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Provider.of<FirebaseAnalytics>(context)
-        .setCurrentScreen(screenName: "HomePage")
-        .then((v) => {});
   }
 
   @override
   Widget build(BuildContext context) {
+    print("drawing Home Page");
     return Scaffold(
       appBar: AppBar(
         title: Text("Flutter Firebase"),
         actions: <Widget>[LogoutButton()],
       ),
-      body: StreamProvider<List<Item>>.value(
-        // when this stream changes, the children will get
-        // updated appropriately
-        stream: DataService().getItemsSnapshot(),
-        child: ItemsList(),
-      ),
+      // body: StreamProvider<List<Item>>.value(
+      //   // when this stream changes, the children will get
+      //   // updated appropriately
+      //   stream: DataService().getItemsSnapshot(),
+      //   child: ItemsList(),
+      // ),
+      body: ItemsList(),
       drawer: Drawer(
-        child: MenuDrawer(),
+        child: FutureBuilder<FirebaseUser>(
+            future: AuthService().getUser,
+            builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                Provider.of<MenuStateInfo>(context)
+                    .setCurrentUser(snapshot.data);
+                return MenuDrawer();
+              } else {
+                return CircularProgressIndicator();
+              }
+            }),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -72,12 +81,13 @@ class LogoutButton extends StatelessWidget {
         onPressed: () async {
           await AuthService().logout();
 
+          // Navigator.pushReplacementNamed(context, "/");
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => LoginPage(),
-              settings: RouteSettings(name: "LoginPage"),
-            ),
+                settings: RouteSettings(name: "LoginPage"),
+                builder: (BuildContext context) => LoginPage()),
           );
         });
   }

@@ -1,9 +1,9 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/components/MessageSnack.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:provider/provider.dart';
+
+import 'Home.dart';
 
 enum FormType { LOGIN, REGISTER }
 
@@ -25,14 +25,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Provider.of<FirebaseAnalytics>(context)
-        .setCurrentScreen(screenName: "LoginPage")
-        .then((v) => {});
   }
 
   bool validate() {
     final form = formKey.currentState;
-    print('{$_email}, $_password, $_firstName, $_lastName');
     form.save();
     if (form.validate()) {
       form.save();
@@ -42,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void submit() async {
+  void submit(BuildContext context) async {
     if (validate()) {
       try {
         setState(() {
@@ -51,28 +47,39 @@ class _LoginPageState extends State<LoginPage> {
         //final auth = Provider.of(context).auth;
         if (_formType == FormType.LOGIN) {
           // Login user using firebase API
-          FirebaseUser user =
-              await FirebaseAuth.instance.signInWithEmailAndPassword(
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _email,
             password: _password,
           );
-          setState(() {
-            _loading = false;
-          });
-          print('Signed in ${user.uid}');
         } else {
           // Create New User user using firebase API
-          FirebaseUser user = await FirebaseAuth.instance
-              .createUserWithEmailAndPassword(
-                  email: _email, password: _password);
-          setState(() {
-            _loading = false;
-          });
-          print('Registered ${user.uid}');
+          var u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: _email, password: _password);
+
+          UserUpdateInfo info = UserUpdateInfo();
+          info.displayName = "$_firstName $_lastName";
+          await u.updateProfile(info);
         }
+
+        setState(() {
+          _loading = false;
+        });
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              settings: RouteSettings(name: "HomePage"),
+              builder: (BuildContext context) => HomePage()),
+        );
       } catch (e) {
-        print(e);
-        MessageSnack().showErrorMessage(e, _scaffoldKey);
+        MessageSnack().showErrorMessage(
+            e,
+            _scaffoldKey,
+            () => {
+                  setState(() {
+                    _loading = false;
+                  })
+                });
       } finally {}
     }
   }
@@ -112,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                         Padding(
                             padding:
                                 EdgeInsets.only(left: 20, right: 20, top: 30),
-                            child: Column(children: buildButtons()))
+                            child: Column(children: buildButtons(context)))
                       ],
                 ),
               ),
@@ -153,13 +160,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  List<Widget> buildButtons() {
+  List<Widget> buildButtons(BuildContext context) {
     if (_formType == FormType.LOGIN) {
       return [
         RaisedButton(
           key: new Key('login'),
           child: Align(alignment: Alignment.center, child: Text('Login')),
-          onPressed: submit,
+          onPressed: () => submit(context),
         ),
         RaisedButton(
           key: new Key('goto-register'),
@@ -176,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
           key: new Key('create-account'),
           child:
               Align(alignment: Alignment.center, child: Text('Create Account')),
-          onPressed: submit,
+          onPressed: () => submit(context),
         ),
         RaisedButton(
           key: new Key('go-back'),

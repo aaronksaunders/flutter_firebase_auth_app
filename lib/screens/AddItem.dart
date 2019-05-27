@@ -149,7 +149,6 @@ class _AddItemPageState extends State<AddItemPage> {
         MessageSnack().showInfoMessage('Item Added Successfully!', _scaffoldKey,
             () => Navigator.pop(context));
       } catch (error) {
-        print(error);
         MessageSnack().showErrorMessage(error, _scaffoldKey);
       }
     }

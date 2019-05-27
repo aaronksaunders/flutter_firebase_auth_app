@@ -67,15 +67,24 @@ class _MenuDrawerState extends State<MenuDrawer> {
     });
   }
 
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("drawing Menu Drawer");
+    var user = Provider.of<MenuStateInfo>(context).getCurrentUser();
     return SafeArea(
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text('Drawer Header '),
+            child:  Text(user != null ? user.email : "Missing Email"),
             decoration: BoxDecoration(
               color: Colors.teal.shade300,
             ),

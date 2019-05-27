@@ -21,13 +21,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("drawing Main Page");
+
     FirebaseAnalytics analytics = FirebaseAnalytics();
 
     analytics.setCurrentScreen(screenName: "Main Screen").then((v) => {});
 
     return MultiProvider(
       providers: [
-        StreamProvider<FirebaseUser>.value(stream: AuthService().user),
         Provider<FirebaseAnalytics>.value(value: analytics),
         Provider<MenuStateInfo>.value(
           value: MenuStateInfo("HomePage"),
@@ -41,14 +42,20 @@ class MyApp extends StatelessWidget {
         navigatorObservers: [
           FirebaseAnalyticsObserver(analytics: analytics),
         ],
-        home: StreamBuilder<FirebaseUser>(
-            stream: AuthService().user,
+        initialRoute: "/",
+        home: FutureBuilder<FirebaseUser>(
+            future: AuthService().getUser,
             builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
-              if (snapshot.connectionState == ConnectionState.active) {
-                final bool loggedIn = snapshot.hasData;
+              if (snapshot.connectionState == ConnectionState.done) {
+                print("drawing main: target screen" +
+                    snapshot.connectionState.toString());
+                final bool loggedIn = snapshot.hasData; 
                 return loggedIn ? HomePage() : LoginPage();
+              } else {
+                print("drawing main: loading circle" +
+                    snapshot.connectionState.toString());
+                return LoadingCircle();
               }
-              return LoadingCircle();
             }),
       ),
     );

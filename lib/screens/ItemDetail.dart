@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth_app/components/ItemDetailForm.dart';
 import 'package:firebase_auth_app/components/MessageSnack.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'AddItem.dart';
 
@@ -28,9 +26,6 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Provider.of<FirebaseAnalytics>(context)
-        .setCurrentScreen(screenName: "ItemDetailPage")
-        .then((v) => {});
   }
 
   @override
@@ -60,7 +55,6 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         itemUser = DataService().getUserById(value.owner);
       });
     } catch (e) {
-      print(e);
       MessageSnack().showErrorMessage(e, _scaffoldKey);
     }
   }
