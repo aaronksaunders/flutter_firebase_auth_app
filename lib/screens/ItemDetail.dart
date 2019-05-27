@@ -61,7 +61,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       });
     } catch (e) {
       print(e);
-      MessageSnack().showErrorMessage(e.message, _scaffoldKey);
+      MessageSnack().showErrorMessage(e, _scaffoldKey);
     }
   }
 }
