@@ -30,6 +30,7 @@ dependencies:
   flutter_icons: 0.1.4
   provider: 2.0.1
   modal_progress_hud: 0.1.3
+  package_info: 0.4.0+3
 
 dev_dependencies:
   flutter_test:

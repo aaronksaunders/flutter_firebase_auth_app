@@ -4,12 +4,20 @@ import 'package:firebase_auth_app/screens/Settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ActiveMenu with ChangeNotifier {
+class MenuStateInfo {
   String _currentMenuItem = "HomePage";
+  dynamic _currentUser = {};
 
-  ActiveMenu(this._currentMenuItem);
+// set initial menu item when creating object
+  MenuStateInfo(this._currentMenuItem);
+
+  // getter and setter for active menu
   getActiveMenu() => _currentMenuItem;
   setActiveMenu(String _menuItem) => _currentMenuItem = _menuItem;
+
+  // getter and setter for current user
+  getCurrentUser() => _currentUser;
+  setCurrentUser(dynamic _user) => _currentUser = _user;
 }
 
 class MenuDrawer extends StatefulWidget {
@@ -42,7 +50,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   };
 
   void _gotoPage(Widget _page, BuildContext _context) {
-    Provider.of<ActiveMenu>(_context)
+    Provider.of<MenuStateInfo>(_context)
         .setActiveMenu(_page.runtimeType.toString());
 
     setState(() {
@@ -50,7 +58,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     });
 
     Future.delayed(const Duration(seconds: 1), () {
-            Navigator.of(_context).pop();
+      Navigator.of(_context).pop();
       Navigator.of(_context).pushReplacement(
         MaterialPageRoute(
             settings: RouteSettings(name: _page.runtimeType.toString()),
@@ -93,7 +101,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
     // determine if this menu item is selected/active
     var isSelected =
-        Provider.of<ActiveMenu>(context).getActiveMenu() == menu['name'];
+        Provider.of<MenuStateInfo>(context).getActiveMenu() == menu['name'];
 
     // set properties based on application state
     var _textStyle =

@@ -119,6 +119,8 @@ PODS:
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - package_info (0.0.1):
+    - Flutter
   - Protobuf (3.7.0)
 
 DEPENDENCIES:
@@ -127,6 +129,7 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `.symlinks/flutter/ios`)
+  - package_info (from `.symlinks/plugins/package_info/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -158,6 +161,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: ".symlinks/flutter/ios"
+  package_info:
+    :path: ".symlinks/plugins/package_info/ios"
 
 SPEC CHECKSUMS:
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
@@ -180,6 +185,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  package_info: 78cabb3c322943c55d39676f4a5bfc748c01d055
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
 
 PODFILE CHECKSUM: aff02bfeed411c636180d6812254b2daeea14d09

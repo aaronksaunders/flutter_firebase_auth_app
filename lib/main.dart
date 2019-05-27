@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
       providers: [
         StreamProvider<FirebaseUser>.value(stream: AuthService().user),
         Provider<FirebaseAnalytics>.value(value: analytics),
-        Provider<ActiveMenu>.value(
-          value: ActiveMenu("HomePage"),
+        Provider<MenuStateInfo>.value(
+          value: MenuStateInfo("HomePage"),
         )
       ],
       child: MaterialApp(
