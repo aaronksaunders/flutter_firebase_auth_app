@@ -3,6 +3,7 @@ import 'package:firebase_auth_app/components/ItemsList.dart';
 import 'package:firebase_auth_app/components/MenuDrawer.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/screens/AddItem.dart';
+import 'package:firebase_auth_app/screens/Login.dart';
 import 'package:firebase_auth_app/services/auth.dart';
 import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,14 @@ class LogoutButton extends StatelessWidget {
         icon: new Icon(Icons.exit_to_app),
         onPressed: () async {
           await AuthService().logout();
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginPage(),
+              settings: RouteSettings(name: "LoginPage"),
+            ),
+          );
         });
   }
 }
