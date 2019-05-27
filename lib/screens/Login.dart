@@ -56,24 +56,24 @@ class _LoginPageState extends State<LoginPage> {
             email: _email,
             password: _password,
           );
-
+          setState(() {
+            _loading = false;
+          });
           print('Signed in ${user.uid}');
         } else {
           // Create New User user using firebase API
           FirebaseUser user = await FirebaseAuth.instance
               .createUserWithEmailAndPassword(
                   email: _email, password: _password);
-
+          setState(() {
+            _loading = false;
+          });
           print('Registered ${user.uid}');
         }
       } catch (e) {
         print(e);
         MessageSnack().showErrorMessage(e, _scaffoldKey);
-      } finally {
-        setState(() {
-          _loading = false;
-        });
-      }
+      } finally {}
     }
   }
 
