@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/components/MessageSnack.dart';
+import 'package:firebase_auth_app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -47,18 +48,14 @@ class _LoginPageState extends State<LoginPage> {
         //final auth = Provider.of(context).auth;
         if (_formType == FormType.LOGIN) {
           // Login user using firebase API
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: _email,
-            password: _password,
-          );
+          await AuthService().loginUser(email: _email, password: _password);
         } else {
           // Create New User user using firebase API
-          var u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-              email: _email, password: _password);
-
-          UserUpdateInfo info = UserUpdateInfo();
-          info.displayName = "$_firstName $_lastName";
-          await u.updateProfile(info);
+          await AuthService().createUser(
+              email: _email,
+              firstName: _firstName,
+              lastName: _lastName,
+              password: _password);
         }
 
         setState(() {
