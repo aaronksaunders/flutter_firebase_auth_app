@@ -1,24 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
-import '../model/Item.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth_app/services/auth.dart';
+import 'package:firebase_auth_app/model/Item.dart';
 
 class DataService {
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
 
-  Stream<List<Item>> getItemsSnapshot() {
-    
+  Stream<List<Item>> getItemsSnapshot() async* {
+    var user = await AuthService().getUser;
     try {
-      var snaps = _db.collection('items').snapshots();
+      var snaps = _db
+          .collection('items')
+          .where('owner', isEqualTo: user.uid)
+          .snapshots();
       snaps.handleError((e) {
         print(e);
         return Stream.empty();
       });
 
-      return snaps.map(
+      yield* snaps.map(
           (list) => list.documents.map((doc) => Item.fromSnap(doc)).toList());
     } catch (e) {
-      return Stream.empty();
+      yield* Stream.empty();
     }
   }
 
@@ -32,13 +35,13 @@ class DataService {
     }
   }
 
-  Future<ItemOwner> getUserById(String userId) async {
-    var itemOwner = await _db.collection('users').document(userId).get();
+//  Future<ItemOwner> getUserById(String userId) async {
+//    var itemOwner = await _db.collection('users').document(userId).get();
 
-    if (itemOwner.exists != null) {
-      return Future(() => ItemOwner.fromSnap(itemOwner));
-    } else {
-      return Future<ItemOwner>.value(null);
-    }
-  }
+//    if (itemOwner.exists != null) {
+//      return Future(() => ItemOwner.fromSnap(itemOwner));
+//    } else {
+//      return Future<ItemOwner>.value(null);
+//    }
+//  }
 }
