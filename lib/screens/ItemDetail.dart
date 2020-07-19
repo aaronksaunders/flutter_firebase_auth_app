@@ -1,12 +1,9 @@
-import 'dart:async';
-
+import 'package:flutter/material.dart';
 import 'package:firebase_auth_app/components/ItemDetailForm.dart';
 import 'package:firebase_auth_app/components/MessageSnack.dart';
 import 'package:firebase_auth_app/model/Item.dart';
 import 'package:firebase_auth_app/services/data.dart';
-import 'package:flutter/material.dart';
-
-import 'AddItem.dart';
+import 'package:firebase_auth_app/screens/AddItem.dart';
 
 class ItemDetailPage extends StatefulWidget {
   ItemDetailPage({this.itemId});
@@ -21,7 +18,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String pageTitle = "";
   Item currentItem;
-  Future<ItemOwner> itemUser;
+  String itemUser;
 
   @override
   void didChangeDependencies() {
@@ -52,7 +49,8 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       setState(() {
         pageTitle = value.subject;
         currentItem = value;
-        itemUser = DataService().getUserById(value.owner);
+//        itemUser = DataService().getUserById(value.owner);
+        itemUser = value.owner;
       });
     } catch (e) {
       MessageSnack().showErrorMessage(e, _scaffoldKey);

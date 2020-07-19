@@ -24,11 +24,11 @@ class AuthService {
 
     UserUpdateInfo info = UserUpdateInfo();
     info.displayName = "$firstName $lastName";
-    return await u.updateProfile(info);
+    return await u.user.updateProfile(info);
   }
 
   // wrappinhg the firebase calls
-  Future<FirebaseUser> loginUser({String email, String password}) {
+  Future<AuthResult> loginUser({String email, String password}) {
     return FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
   }

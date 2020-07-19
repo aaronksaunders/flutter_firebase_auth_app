@@ -1,9 +1,8 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:firebase_auth_app/components/MessageSnack.dart';
 import 'package:firebase_auth_app/model/Item.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:provider/provider.dart';
 
 class AddItemPage extends StatefulWidget {
   final Item currentItem;
@@ -23,12 +22,34 @@ class _AddItemPageState extends State<AddItemPage> {
   String _subject, _body, _dueDate = " ";
   Item _currentItem;
 
+  _printLatestValue() {
+    setState(() {
+      print("text _controller Value: ${_controller.text}");
+      if (_dueDate != " ") {
+        _controller.text = _dueDate;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+    _controller.addListener(_printLatestValue);
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    Provider.of<FirebaseAnalytics>(context)
-        .setCurrentScreen(screenName: "AddItemPage")
-        .then((v) => {});
   }
 
   @override
@@ -178,8 +199,11 @@ class _AddItemPageState extends State<AddItemPage> {
         lastDate: new DateTime(2022));
 
     if (picked != null) {
-      _controller.text = picked.toString();
-      setState(() => _dueDate = picked.toString());
+      setState(() {
+//        _dueDate = picked.toString();
+        _dueDate = intl.DateFormat('yMMMd').format(picked).toString();
+        _controller.text = _dueDate;
+      });
     }
   }
 }

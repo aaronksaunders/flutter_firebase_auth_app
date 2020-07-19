@@ -4,7 +4,6 @@ import 'package:firebase_auth_app/services/data.dart';
 import 'package:flutter/material.dart';
 
 class ItemsList extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Item>>(

@@ -1,13 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/components/ItemsList.dart';
 import 'package:firebase_auth_app/components/MenuDrawer.dart';
-
 import 'package:firebase_auth_app/screens/AddItem.dart';
 import 'package:firebase_auth_app/services/auth.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'Login.dart';
+import 'package:firebase_auth_app/screens/Login.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
