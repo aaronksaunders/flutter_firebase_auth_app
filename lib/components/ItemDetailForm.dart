@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/model/Item.dart';
+import 'package:firebase_auth_app/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class ItemDetailForm extends StatelessWidget {
@@ -8,20 +10,21 @@ class ItemDetailForm extends StatelessWidget {
     @required this.currentItem,
   }) : super(key: key);
 
-  final Future<ItemOwner> itemUser;
+  final String itemUser;
   final Item currentItem;
 
-  String _renderName(ItemOwner data) {
-    return '${data.firstName} ${data.lastName}';
+  String _renderName(FirebaseUser owner) {
+//    return '${data.firstName} ${data.lastName}';
+    return owner.displayName;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: FutureBuilder<ItemOwner>(
-          future: itemUser,
+      child: FutureBuilder<FirebaseUser>(
+          future: AuthService().getUser,
           builder: (context, snapshot) {
-            if (snapshot.hasData == true) {
+            if (snapshot.hasData == true && currentItem != null) {
               var itemOwner = snapshot.data;
 
               return Padding(
